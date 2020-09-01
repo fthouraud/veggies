@@ -215,6 +215,118 @@ test('check if stdout or stderr does not contain something', () => {
     }).not.toThrow()
 })
 
+test('check if stdout or stderr starts with something', () => {
+    const context = helper.getContext() // Extension context
+    const def = context.getDefinitionByMatcher('(stderr|stdout) should start with')
+    def.shouldNotMatch('stdcrap should start with something')
+    def.shouldNotMatch('stdout should start with ')
+    def.shouldMatch('stdout should start with something', ['stdout', 'something'])
+    def.shouldMatch('stderr should start with something', ['stderr', 'something'])
+
+    const getOutput = sinon.stub()
+    getOutput.withArgs('stdout').returns('this is stdout')
+    getOutput.withArgs('stderr').returns('this is stderr')
+    const cliMock = { cli: { getOutput: getOutput } }
+
+    expect(() => {
+        def.exec(cliMock, 'stdout', 'something')
+    }).toThrow(`expected this is stdout to start with something`)
+    expect(() => {
+        def.exec(cliMock, 'stdout', 'this')
+    }).not.toThrow()
+
+    expect(() => {
+        def.exec(cliMock, 'stderr', 'something')
+    }).toThrow(`expected this is stderr to start with something`)
+    expect(() => {
+        def.exec(cliMock, 'stderr', 'this')
+    }).not.toThrow()
+})
+
+test('check if stdout or stderr does not start with something', () => {
+    const context = helper.getContext() // Extension context
+    const def = context.getDefinitionByMatcher('(stderr|stdout) should not start with')
+    def.shouldNotMatch('stdcrap should not start with something')
+    def.shouldNotMatch('stdout should not start with ')
+    def.shouldMatch('stdout should not start with something', ['stdout', 'something'])
+    def.shouldMatch('stderr should not start with something', ['stderr', 'something'])
+
+    const getOutput = sinon.stub()
+    getOutput.withArgs('stdout').returns('this is stdout')
+    getOutput.withArgs('stderr').returns('this is stderr')
+    const cliMock = { cli: { getOutput: getOutput } }
+
+    expect(() => {
+        def.exec(cliMock, 'stdout', 'something')
+    }).not.toThrow()
+    expect(() => {
+        def.exec(cliMock, 'stdout', 'this')
+    }).toThrow(`expected this is stdout not to start with this`)
+
+    expect(() => {
+        def.exec(cliMock, 'stderr', 'something')
+    }).not.toThrow()
+    expect(() => {
+        def.exec(cliMock, 'stderr', 'this')
+    }).toThrow(`expected this is stderr not to start with this`)
+})
+
+test('check if stdout or stderr ends with something', () => {
+    const context = helper.getContext() // Extension context
+    const def = context.getDefinitionByMatcher('(stderr|stdout) should end with')
+    def.shouldNotMatch('stdcrap should end with something')
+    def.shouldNotMatch('stdout should end with ')
+    def.shouldMatch('stdout should end with something', ['stdout', 'something'])
+    def.shouldMatch('stderr should end with something', ['stderr', 'something'])
+
+    const getOutput = sinon.stub()
+    getOutput.withArgs('stdout').returns('stdout is here')
+    getOutput.withArgs('stderr').returns('stderr is here')
+    const cliMock = { cli: { getOutput: getOutput } }
+
+    expect(() => {
+        def.exec(cliMock, 'stdout', 'something')
+    }).toThrow(`expected stdout is here to end with something`)
+    expect(() => {
+        def.exec(cliMock, 'stdout', 'here')
+    }).not.toThrow()
+
+    expect(() => {
+        def.exec(cliMock, 'stderr', 'something')
+    }).toThrow(`expected stderr is here to end with something`)
+    expect(() => {
+        def.exec(cliMock, 'stderr', 'here')
+    }).not.toThrow()
+})
+
+test('check if stdout or stderr does not end with something', () => {
+    const context = helper.getContext() // Extension context
+    const def = context.getDefinitionByMatcher('(stderr|stdout) should not end with')
+    def.shouldNotMatch('stdcrap should not end with something')
+    def.shouldNotMatch('stdout should not end with ')
+    def.shouldMatch('stdout should not end with something', ['stdout', 'something'])
+    def.shouldMatch('stderr should not end with something', ['stderr', 'something'])
+
+    const getOutput = sinon.stub()
+    getOutput.withArgs('stdout').returns('stdout is here')
+    getOutput.withArgs('stderr').returns('stderr is here')
+    const cliMock = { cli: { getOutput: getOutput } }
+
+    expect(() => {
+        def.exec(cliMock, 'stdout', 'something')
+    }).not.toThrow()
+    expect(() => {
+        def.exec(cliMock, 'stdout', 'here')
+    }).toThrow(`expected stdout is here not to end with here`)
+
+    expect(() => {
+        def.exec(cliMock, 'stderr', 'something')
+    }).not.toThrow()
+    expect(() => {
+        def.exec(cliMock, 'stderr', 'here')
+    }).toThrow(`expected stderr is here not to end with here`)
+})
+
 test('check if stdout or stderr matches a regular expression', () => {
     const context = helper.getContext() // Extension context
     const def = context.getDefinitionByMatcher('(stderr|stdout) should match')

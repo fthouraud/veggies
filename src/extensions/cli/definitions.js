@@ -1,7 +1,9 @@
 'use strict'
 
 const { Given, Then, When } = require('cucumber')
-const { expect } = require('chai')
+const { expect, use } = require('chai')
+
+use(require('chai-string'))
 
 exports.install = () => {
     Given(/^(?:I )?set (?:working directory|cwd) to (.+)$/, function (cwd) {
@@ -74,5 +76,29 @@ exports.install = () => {
         const output = this.cli.getOutput(type)
 
         expect(output).to.not.match(new RegExp(regex, 'gim'))
+    })
+
+    Then(/^(stderr|stdout) should start with (.+)$/, function (type, prefix) {
+        const output = this.cli.getOutput(type)
+
+        expect(output).to.startsWith(prefix)
+    })
+
+    Then(/^(stderr|stdout) should not start with (.+)$/, function (type, prefix) {
+        const output = this.cli.getOutput(type)
+
+        expect(output).to.not.startsWith(prefix)
+    })
+
+    Then(/^(stderr|stdout) should end with (.+)$/, function (type, prefix) {
+        const output = this.cli.getOutput(type)
+
+        expect(output).to.endsWith(prefix)
+    })
+
+    Then(/^(stderr|stdout) should not end with (.+)$/, function (type, prefix) {
+        const output = this.cli.getOutput(type)
+
+        expect(output).to.not.endsWith(prefix)
     })
 }
